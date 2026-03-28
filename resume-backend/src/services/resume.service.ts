@@ -183,7 +183,7 @@ export class ResumeService {
     const educationSection = data.education.map((item) => `
       <article class="entry compact">
         <h3 class="card-title">${escapeHtml(item.course)}</h3>
-        <div class="meta">${[item.institution, item.status].filter(Boolean).map(escapeHtml).join(' · ')}</div>
+        <div class="meta">${[item.institution, item.status].filter((v): v is string => Boolean(v)).map((v) => escapeHtml(v)).join(' · ')}</div>
       </article>
     `).join('');
 
@@ -327,8 +327,6 @@ function extractContactFromResume(resumeText: string): ResumeInput['contact'] {
   };
 }
 
-
-
 function normalizeExperience(item: ExperienceItem): ExperienceItem {
   const bullets = (item.bullets || []).map(cleanText).filter(Boolean);
   const company = cleanText(item.company || '');
@@ -344,18 +342,21 @@ function normalizeExperience(item: ExperienceItem): ExperienceItem {
   };
 }
 
-
 function normalizeProject(item: ProjectItem): ProjectItem {
   return {
-    name: cleanText(item.name),
-    description: cleanText(item.description),
-    stack: dedupe((item.stack || []).map(cleanText).filter(Boolean))
+    name: cleanText(item.name || ''),
+    description: cleanText(item.description || ''),
+    stack: dedupe(
+      (item.stack || [])
+        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        .map((value) => cleanText(value))
+    )
   };
 }
 
 function normalizeEducation(item: EducationItem): EducationItem {
   return {
-    course: cleanText(item.course),
+    course: cleanText(item.course || ''),
     institution: cleanText(item.institution || ''),
     status: cleanText(item.status || '')
   };
@@ -373,7 +374,6 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
-
 
 function extractNameFromResume(resumeText: string): string {
   const lines = resumeText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
