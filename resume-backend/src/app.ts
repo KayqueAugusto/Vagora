@@ -5,7 +5,17 @@ import { resumeRoutes } from './routes/resume.routes';
 
 export const app = express();
 
-app.use(cors({ origin: env.allowedOrigin }));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'https://vagora-eight.vercel.app',
+      'https://vagora-3wygmdkgs-kayqueaugustos-projects.vercel.app'
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true
+  })
+);
 app.use(express.json({ limit: '2mb' }));
 
 app.get('/health', (_req, res) => {
