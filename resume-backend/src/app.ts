@@ -10,7 +10,7 @@ app.use(
     origin: [
       'http://localhost:5173',
       'https://vagora-eight.vercel.app',
-      'https://vagora-3wygmdkgs-kayqueaugustos-projects.vercel.app'
+      
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true
